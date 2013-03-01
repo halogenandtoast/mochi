@@ -1,17 +1,22 @@
-SRC = src/main.cpp
-OBJ = ${SRC:.cpp=.o}
-
-CC = g++
-LEX = flex
-YACC = bison
+OBJS = src/mochi.tab.o \
+			 src/lex.o \
+			 src/main.o
 
 all: mochi
 
-.cpp.o:
-	@${CC} -c -o $@ $<
+src/mochi.tab.h: src/mochi.tab.c
 
-mochi: ${OBJ}
-	${CC} ${OBJ} -o mochi
+src/mochi.tab.c: src/mochi.y
+	yacc -d -o $@ $^
+
+src/lex.c: src/lex.l src/mochi.tab.h
+	lex -o $@ $^
+
+%.o: %.c
+	gcc -o $@ -c $<
+
+mochi: $(OBJS)
+	gcc -o $@ $(OBJS)
 
 clean:
-	@rm -f ${OBJ} mochi
+	@rm -f ${OBJS} mochi lex src/lex.c src/mochi.tab.c src/mochi.tab.h
