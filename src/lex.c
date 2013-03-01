@@ -361,8 +361,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 3
-#define YY_END_OF_BUFFER 4
+#define YY_NUM_RULES 7
+#define YY_END_OF_BUFFER 8
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -370,27 +370,28 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[8] =
+static yyconst flex_int16_t yy_accept[13] =
     {   0,
-        0,    0,    4,    2,    3,    1,    0
+        0,    0,    8,    6,    5,    1,    2,    4,    3,    4,
+        3,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
+        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    4,    1,    4,    1,    1,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    3,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    6,    6,    6,    6,
 
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        6,    6,    6,    6,    6,    6,    6,    6,    6,    6,
+        6,    6,    6,    6,    6,    6,    6,    6,    6,    6,
+        6,    6,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -407,29 +408,33 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[4] =
+static yyconst flex_int32_t yy_meta[7] =
     {   0,
-        1,    1,    1
+        1,    1,    1,    1,    2,    3
     } ;
 
-static yyconst flex_int16_t yy_base[8] =
+static yyconst flex_int16_t yy_base[15] =
     {   0,
-        0,    0,    4,    5,    5,    5,    5
+        0,    0,    9,   10,   10,   10,   10,    0,    0,    0,
+        0,   10,    6,    4
     } ;
 
-static yyconst flex_int16_t yy_def[8] =
+static yyconst flex_int16_t yy_def[15] =
     {   0,
-        7,    1,    7,    7,    7,    7,    0
+       12,    1,   12,   12,   12,   12,   12,   13,   14,   13,
+       14,    0,   12,   12
     } ;
 
-static yyconst flex_int16_t yy_nxt[9] =
+static yyconst flex_int16_t yy_nxt[17] =
     {   0,
-        4,    5,    6,    7,    3,    7,    7,    7
+        4,    5,    6,    7,    8,    9,   11,   10,   12,    3,
+       12,   12,   12,   12,   12,   12
     } ;
 
-static yyconst flex_int16_t yy_chk[9] =
+static yyconst flex_int16_t yy_chk[17] =
     {   0,
-        1,    1,    1,    3,    7,    7,    7,    7
+        1,    1,    1,    1,    1,    1,   14,   13,    3,   12,
+       12,   12,   12,   12,   12,   12
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -448,9 +453,10 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "src/lex.l"
 #line 2 "src/lex.l"
+#include "mochi.h"
 #include "mochi.tab.h"
 #define TOKEN(t) (yylval.token = t)
-#line 454 "src/lex.c"
+#line 460 "src/lex.c"
 
 #define INITIAL 0
 
@@ -632,9 +638,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 6 "src/lex.l"
+#line 7 "src/lex.l"
 
-#line 638 "src/lex.c"
+#line 644 "src/lex.c"
 
 	if ( !(yy_init) )
 		{
@@ -687,13 +693,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 8 )
+				if ( yy_current_state >= 13 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 5 );
+		while ( yy_base[yy_current_state] != 10 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -718,21 +724,42 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
+/* rule 1 can match eol */
 YY_RULE_SETUP
-#line 7 "src/lex.l"
-return TOKEN(TPLUS);
+#line 8 "src/lex.l"
+return TOKEN(TNEWLINE);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 8 "src/lex.l"
-printf("Unknown token!\n"); yyterminate();
+#line 9 "src/lex.l"
+yylval.string = yytext; return TOP;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 9 "src/lex.l"
+#line 10 "src/lex.l"
+yylval.node = NEW_LIT((VALUE)yytext); return TNAME;
+	YY_BREAK
+case 4:
+YY_RULE_SETUP
+#line 11 "src/lex.l"
+yylval.node = NEW_LIT((VALUE)atoi(yytext)); return TNUMBER;
+	YY_BREAK
+case 5:
+YY_RULE_SETUP
+#line 12 "src/lex.l"
+
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+#line 13 "src/lex.l"
+printf("Unknown token!: %s\n", yytext); yyterminate();
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 14 "src/lex.l"
 ECHO;
 	YY_BREAK
-#line 736 "src/lex.c"
+#line 763 "src/lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1024,7 +1051,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 8 )
+			if ( yy_current_state >= 13 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1052,11 +1079,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 8 )
+		if ( yy_current_state >= 13 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 7);
+	yy_is_jam = (yy_current_state == 12);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1729,12 +1756,12 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 9 "src/lex.l"
+#line 14 "src/lex.l"
 
 
 
 yywrap() {
-  return(1);
+  return 1;
 }
 /* A Bison parser, made by GNU Bison 2.6.2.  */
 
@@ -1784,11 +1811,17 @@ extern int yydebug;
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     TPLUS = 258
+     TNUMBER = 258,
+     TNAME = 259,
+     TNEWLINE = 260,
+     TOP = 261
    };
 #endif
 /* Tokens.  */
-#define TPLUS 258
+#define TNUMBER 258
+#define TNAME 259
+#define TNEWLINE 260
+#define TOP 261
 
 
 
@@ -1796,13 +1829,15 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2055 of yacc.c  */
-#line 7 "src/mochi.y"
+#line 12 "src/mochi.y"
 
+  NODE* node;
   int token;
+  char* string;
 
 
 /* Line 2055 of yacc.c  */
-#line 68 "src/mochi.tab.h"
+#line 76 "src/mochi.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

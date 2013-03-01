@@ -46,11 +46,17 @@ extern int yydebug;
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     TPLUS = 258
+     TNUMBER = 258,
+     TNAME = 259,
+     TNEWLINE = 260,
+     TOP = 261
    };
 #endif
 /* Tokens.  */
-#define TPLUS 258
+#define TNUMBER 258
+#define TNAME 259
+#define TNEWLINE 260
+#define TOP 261
 
 
 
@@ -58,13 +64,15 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2055 of yacc.c  */
-#line 7 "src/mochi.y"
+#line 12 "src/mochi.y"
 
+  NODE* node;
   int token;
+  char* string;
 
 
 /* Line 2055 of yacc.c  */
-#line 68 "src/mochi.tab.h"
+#line 76 "src/mochi.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
