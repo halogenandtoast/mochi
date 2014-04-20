@@ -41,5 +41,6 @@ Node *new_node(enum mochi_node_type type, size_t size, ...);
 Node *append_node(Node *parent, Node *child);
 int mochi_run(Node *node);
 void free_node(Node *node);
+void dump_node(Node *node);
 
 #endif

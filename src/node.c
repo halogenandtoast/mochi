@@ -58,17 +58,21 @@ void dump_node(Node *node) {
       printf(")");
       break;
     case MOCHI_EXPRESSION_NODE:
-      printf("( EXPRESSION_NODE ");
+      printf("( EXPRESSION_NODE [");
       if (node->u1.node != NULL) {
         dump_node(node->u1.node);
       }
-      printf(")");
+      if (node->u3.node != NULL) {
+        printf("AFTER \n");
+        dump_node(node->u3.node);
+      }
+      printf("] )");
       break;
     case MOCHI_STRING_NODE:
       printf("( \"%s\" )", node->u1.string);
       break;
     case MOCHI_LITERAL_NODE:
-      printf("( LITERAL )");
+      printf("%d", (int) (node->u1.value >> 1));
       break;
   }
 }
@@ -84,6 +88,9 @@ VALUE mochi_run_node(VM *vm, Node *node) {
       break;
     case MOCHI_EXPRESSION_NODE:
       return_value = mochi_run_node(vm, node->u1.node);
+      if(node->u3.node != NULL) {
+        return_value = mochi_run_node(vm, node->u3.node);
+      }
       break;
     case MOCHI_STRING_NODE:
       return_value = create_string(vm, node->u1.string);
@@ -93,6 +100,13 @@ VALUE mochi_run_node(VM *vm, Node *node) {
       break;
   }
   return return_value;
+}
+
+Node *append_node(Node *parent, Node *child) {
+  Node *tail = parent;
+  while(tail->u3.node != NULL) tail = tail->u3.node;
+  tail->u3.node = child;
+  return parent;
 }
 
 int mochi_run(Node *node) {

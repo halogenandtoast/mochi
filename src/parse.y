@@ -31,7 +31,8 @@ void yyerror(const char *error) { fprintf(stderr, "%s\n", error); }
 
 program: expressions { $$ = mochi_run($1); }
 
-expressions: expression { $$ = new_node(MOCHI_EXPRESSION_NODE, 1, $1); }
+expressions: expressions expression { $$ = append_node($1, new_node(MOCHI_EXPRESSION_NODE, 1, $2)); }
+           | expression { $$ = new_node(MOCHI_EXPRESSION_NODE, 1, $1); }
 
 expression: expression PLUS expression { $$ = new_node(MOCHI_FUNCTION_CALL_NODE, 3, "+", $1, $3); }
           | expression DOT ID { $$ = new_node(MOCHI_FUNCTION_CALL_NODE, 3, $3, $1, NULL); }

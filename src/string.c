@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "mochi.h"
 #include "vm.h"
 #include "class.h"
@@ -10,13 +11,31 @@ VALUE mochi_string_print(VM *vm, VALUE self) {
   return self;
 }
 
+VALUE mochi_string_downcase(VM *vm, VALUE self) {
+  char *str = strdup(((struct MString *) self)->content);
+  for(int i = 0; str[i]; i++) str[i] = tolower(str[i]);
+
+  return create_string(vm, str);
+}
+
+VALUE mochi_string_upcase(VM *vm, VALUE self) {
+  char *str = strdup(((struct MString *) self)->content);
+  for(int i = 0; str[i]; i++) str[i] = toupper(str[i]);
+
+  return create_string(vm, str);
+}
+
+VALUE mochi_string_capitalize(VM *vm, VALUE self) {
+  VALUE new_string = mochi_string_downcase(vm, self);
+  char *content = ((struct MString *) new_string)->content;
+  content[0] = toupper(content[0]);
+  return new_string;
+}
+
 VALUE mochi_string_reverse(VM *vm, VALUE self) {
   char temp, *end_ptr;
   char *str = strdup(((struct MString *) self)->content);
   char *start = str;
-
-  if( str == NULL || !(*str) )
-    return (VALUE) 0;
 
   end_ptr = str + strlen(str) - 1;
 
@@ -44,4 +63,7 @@ void init_string(VM *vm) {
   VALUE cString = mochi_create_class(vm, "String");
   mochi_define_method(cString, "puts", mochi_string_print);
   mochi_define_method(cString, "reverse", mochi_string_reverse);
+  mochi_define_method(cString, "downcase", mochi_string_downcase);
+  mochi_define_method(cString, "upcase", mochi_string_upcase);
+  mochi_define_method(cString, "capitalize", mochi_string_capitalize);
 }
