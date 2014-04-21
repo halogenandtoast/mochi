@@ -7,6 +7,25 @@
 #include "class.h"
 #include "string.h"
 
+void create_instruction(Instruction *instruction, enum op_code code) {
+  instruction->op = code;
+}
+
+void create_send(Instruction *instruction, char *method) {
+  create_instruction(instruction, OP_SEND);
+  instruction->label = strdup(method); // TODO: free this
+}
+
+void create_string_instruction(Instruction *instruction, char *method) {
+  create_instruction(instruction, PUSH_STRING);
+  instruction->label = strdup(method); // TODO: free this
+}
+
+void create_push_instruction(Instruction *instruction, enum op_code code, VALUE value) {
+  create_instruction(instruction, code);
+  instruction->value = value;
+}
+
 VALUE mochi_function_call(VM *vm, char *method, VALUE left, VALUE right) {
   VALUE klass = mochi_get_class(vm, left);
   struct MMethod *current_method = ((struct MClass *) klass)->method;
@@ -43,6 +62,8 @@ Node *new_node(enum mochi_node_type type, size_t size, ...) {
     case MOCHI_LITERAL_NODE:
       node->u1.value = va_arg(args, VALUE);
       break;
+    case MOCHI_DONE_NODE:
+      break;
   }
 
   va_end(args);
@@ -74,32 +95,36 @@ void dump_node(Node *node) {
     case MOCHI_LITERAL_NODE:
       printf("%d", (int) (node->u1.value >> 1));
       break;
+    case MOCHI_DONE_NODE:
+      break;
   }
 }
 
-VALUE mochi_run_node(VM *vm, Node *node) {
-  VALUE return_value;
-  VALUE self;
-
+void mochi_run_node(Instruction **instructions, Node *node) {
   switch(node->type) {
     case MOCHI_FUNCTION_CALL_NODE:
-      self = mochi_run_node(vm, node->u2.node);
-      return_value = mochi_function_call(vm, node->u1.string, self, (VALUE) 0);
+      mochi_run_node(instructions, node->u2.node);
+      create_send(*instructions, node->u1.string);
+      *instructions = *instructions + 1;
       break;
     case MOCHI_EXPRESSION_NODE:
-      return_value = mochi_run_node(vm, node->u1.node);
-      if(node->u3.node != NULL) {
-        return_value = mochi_run_node(vm, node->u3.node);
+      mochi_run_node(instructions, node->u1.node);
+      if (node->u3.node != NULL) {
+        mochi_run_node(instructions, node->u3.node);
       }
       break;
     case MOCHI_STRING_NODE:
-      return_value = create_string(vm, node->u1.string);
+      create_string_instruction(*instructions, node->u1.string);
+      *instructions = *instructions + 1;
+      break;
+    case MOCHI_DONE_NODE:
+      create_instruction(*instructions, LEAVE);
       break;
     case MOCHI_LITERAL_NODE:
-      return_value = node->u1.value;
+      create_push_instruction(*instructions, PUSH_LITERAL, node->u1.value);
+      *instructions = *instructions + 1;
       break;
   }
-  return return_value;
 }
 
 Node *append_node(Node *parent, Node *child) {
@@ -111,8 +136,11 @@ Node *append_node(Node *parent, Node *child) {
 
 int mochi_run(Node *node) {
   VM *vm = vm_init();
-  mochi_run_node(vm, node);
+  Instruction *instructions = (Instruction *) malloc(sizeof(Instruction) * 5000);
+  Instruction *head = instructions;
+  mochi_run_node(&head, node);
   free_node(node);
+  vm_eval(vm, instructions);
   vm_destroy(vm);
   return 0;
 }

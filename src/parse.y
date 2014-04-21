@@ -29,7 +29,7 @@ void yyerror(const char *error) { fprintf(stderr, "%s\n", error); }
 
 %%
 
-program: expressions { $$ = mochi_run($1); }
+program: expressions { $$ = mochi_run(append_node($1, new_node(MOCHI_DONE_NODE, 0))); }
 
 expressions: expressions expression { $$ = append_node($1, new_node(MOCHI_EXPRESSION_NODE, 1, $2)); }
            | expression { $$ = new_node(MOCHI_EXPRESSION_NODE, 1, $1); }

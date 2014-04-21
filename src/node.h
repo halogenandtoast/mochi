@@ -2,6 +2,7 @@
 #define _NODE_H_
 
 #include <stdlib.h>
+#include "vm.h"
 #include "mochi.h"
 
 enum mochi_node_type {
@@ -11,8 +12,10 @@ enum mochi_node_type {
 #define MOCHI_EXPRESSION_NODE MOCHI_EXPRESSION_NODE
   MOCHI_LITERAL_NODE,
 #define MOCHI_LITERAL_NODE MOCHI_LITERAL_NODE
-  MOCHI_STRING_NODE
+  MOCHI_STRING_NODE,
 #define MOCHI_STRING_NODE MOCHI_STRING_NODE
+  MOCHI_DONE_NODE,
+#define MOCHI_DONE_NODE MOCHI_DONE_NODE
 };
 
 typedef struct Node {
@@ -42,5 +45,6 @@ Node *append_node(Node *parent, Node *child);
 int mochi_run(Node *node);
 void free_node(Node *node);
 void dump_node(Node *node);
+VALUE mochi_function_call(VM *vm, char *method, VALUE left, VALUE right);
 
 #endif

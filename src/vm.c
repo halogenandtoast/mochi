@@ -2,18 +2,57 @@
 #include "integer.h"
 #include "string.h"
 #include "mochi.h"
+#include "node.h"
 #include <string.h>
 #include <stdio.h>
 
 VM *vm_init() {
   VM *vm = (VM *) malloc(sizeof(VM));
+  vm->stack = (VALUE *) malloc(sizeof(VALUE) * STACK_SIZE);
+  vm->sp = 0;
+
   init_integer(vm);
   init_string(vm);
   return vm;
 }
 
 void vm_destroy(VM *vm) {
+  free(vm->instructions);
+  free(vm->stack);
   free(vm);
+}
+
+void vm_eval(VM *vm, Instruction *instructions) {
+  VALUE right, left, self, result;
+  Instruction instruction;
+  vm->instructions = instructions;
+  vm->ip = 0;
+
+  while(vm->instructions[vm->ip].op != LEAVE) {
+    instruction = vm->instructions[vm->ip];
+    switch(instruction.op) {
+      case PUSH_LITERAL:
+        vm->stack[vm->sp++] = instruction.value;
+        break;
+      case PUSH_STRING:
+        vm->stack[vm->sp++] = create_string(vm, instruction.label);
+        break;
+      case OP_PLUS:
+        right = vm->stack[--vm->sp];
+        left = vm->stack[--vm->sp];
+        result = (left >> 1) + (right >> 1);
+        vm->stack[vm->sp++] = INT2FIX(result);
+        break;
+      case OP_SEND:
+        self = vm->stack[--vm->sp];
+        vm->stack[vm->sp++] = mochi_function_call(vm, instruction.label, self, (VALUE) 0);
+        break;
+      case NOOP:
+      case LEAVE:
+        break;
+    }
+    vm->ip++;
+  }
 }
 
 void define_constant(VM *vm, char *name, VALUE object) {
