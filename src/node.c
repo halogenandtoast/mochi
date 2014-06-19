@@ -26,7 +26,24 @@ void create_push_instruction(Instruction *instruction, enum op_code code, VALUE 
   instruction->value = value;
 }
 
-VALUE mochi_function_call(VM *vm, char *method, VALUE left, VALUE right) {
+VALUE mochi_function_call(VM *vm, char *method, VALUE left, int n, ...) {
+  VALUE *argv;
+  va_list ar;
+  if (n > 0) {
+    long i;
+
+    va_start(ar, n);
+
+    argv = calloc(sizeof(VALUE), n);
+
+    for (i = 0; i < n; i++) {
+      argv[i] = va_arg(ar, VALUE);
+    }
+    va_end(ar);
+  } else {
+    argv = 0;
+  }
+
   VALUE klass = mochi_get_class(vm, left);
   struct MMethod *current_method = ((struct MClass *) klass)->method;
 
@@ -34,7 +51,7 @@ VALUE mochi_function_call(VM *vm, char *method, VALUE left, VALUE right) {
     current_method = current_method->method;
 
   if(current_method) {
-    return current_method->c_func(vm, left);
+    return current_method->c_func(vm, left, argv);
   }
 
   return (VALUE) 0;

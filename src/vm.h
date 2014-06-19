@@ -19,10 +19,10 @@ enum op_code {
 #define LEAVE LEAVE
 };
 
-struct ConstantListItem {
+struct vTable {
   char *name;
   VALUE value;
-  struct ConstantListItem *next;
+  struct vTable *next;
 };
 
 typedef struct Instruction {
@@ -32,7 +32,8 @@ typedef struct Instruction {
 } Instruction;
 
 typedef struct VM {
-  struct ConstantListItem *constant;
+  struct vTable *constant;
+  struct vTable *global;
   int sp;
   int ip;
   VALUE *stack;
@@ -43,7 +44,9 @@ VM *vm_init();
 void vm_destroy(VM *vm);
 void vm_eval(VM *vm, Instruction *instructions);
 void define_constant(VM *vm, char *name, VALUE object);
+void define_global(VM *vm, char *name, VALUE object);
 VALUE mochi_get_constant(VM *vm, char *name);
+VALUE mochi_get_global(VM *vm, char *name);
 VALUE mochi_get_class(VM *vm, VALUE value);
 
 #endif

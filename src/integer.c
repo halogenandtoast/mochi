@@ -3,7 +3,7 @@
 #include "vm.h"
 #include "class.h"
 
-VALUE mochi_integer_print(VM *vm, VALUE self) {
+VALUE mochi_integer_print(VM *vm, VALUE self, VALUE *argv) {
   printf("%d\n", (int) (self >> 1));
   return self;
 }

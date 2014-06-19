@@ -1,6 +1,7 @@
 #include "vm.h"
 #include "integer.h"
 #include "string.h"
+#include "io.h"
 #include "mochi.h"
 #include "node.h"
 #include <string.h>
@@ -13,6 +14,11 @@ VM *vm_init() {
 
   init_integer(vm);
   init_string(vm);
+  init_io(vm);
+
+  define_global(vm, "stdin", create_io(vm, fileno(stdin)));
+  define_global(vm, "stdout", create_io(vm, fileno(stdout)));
+
   return vm;
 }
 
@@ -45,7 +51,7 @@ void vm_eval(VM *vm, Instruction *instructions) {
         break;
       case OP_SEND:
         self = vm->stack[--vm->sp];
-        vm->stack[vm->sp++] = mochi_function_call(vm, instruction.label, self, (VALUE) 0);
+        vm->stack[vm->sp++] = mochi_function_call(vm, instruction.label, self, 0);
         break;
       case NOOP:
       case LEAVE:
@@ -55,23 +61,44 @@ void vm_eval(VM *vm, Instruction *instructions) {
   }
 }
 
-void define_constant(VM *vm, char *name, VALUE object) {
-  struct ConstantListItem *new_constant = (struct ConstantListItem *) malloc(sizeof(struct ConstantListItem));
-  new_constant->name = strdup(name);
-  new_constant->next = vm->constant;
-  new_constant->value = (VALUE) object;
+struct vTable *create_vtable_entry(char *name, VALUE value, struct vTable *next) {
+  struct vTable *entry = (struct vTable *) malloc(sizeof(struct vTable));
+  entry->name = strdup(name);
+  entry->next = next;
+  entry->value = (VALUE) value;
+  return entry;
+}
 
-  vm->constant = new_constant;
+void define_global(VM *vm, char *name, VALUE object) {
+  vm->global = create_vtable_entry(name, object, vm->global);
+}
+
+void define_constant(VM *vm, char *name, VALUE object) {
+  vm->constant = create_vtable_entry(name, object, vm->constant);
+}
+
+struct vTable *get_vtable_entry(struct vTable *table, char *name) {
+  struct vTable *current_entry = table;
+  while(current_entry && strcmp(current_entry->name, name) != 0)
+    current_entry = current_entry->next;
+  return current_entry;
 }
 
 VALUE mochi_get_constant(VM *vm, char *name) {
-  struct ConstantListItem *current_constant = vm->constant;
-  while(current_constant && strcmp(current_constant->name, name) != 0)
-    current_constant = current_constant->next;
-  if(current_constant) {
-    return current_constant->value;
+  struct vTable *constant = get_vtable_entry(vm->constant, name);
+  if(constant) {
+    return constant->value;
   }
   fprintf(stderr, "Failed to get constant: %s\n", name);
+  return (VALUE) 0;
+}
+
+VALUE mochi_get_global(VM *vm, char *name) {
+  struct vTable *global = get_vtable_entry(vm->global, name);
+  if(global) {
+    return global->value;
+  }
+  fprintf(stderr, "Failed to get global: %s\n", name);
   return (VALUE) 0;
 }
 

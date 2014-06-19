@@ -1,4 +1,4 @@
-SRC = src/main.c src/lex.yy.c src/y.tab.c src/node.c src/class.c src/vm.c src/integer.c src/string.c
+SRC = src/main.c src/lex.yy.c src/y.tab.c src/node.c src/class.c src/vm.c src/integer.c src/string.c src/io.c
 all: mochi
 
 mochi: ${SRC}
